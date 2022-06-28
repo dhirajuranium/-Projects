@@ -57,7 +57,7 @@ const createAuthor = async function (req, res) {
 
         let savedData = await authorModel.create(req.body)
         
-        return res.status(201).send({ status: true, data: savedData, msg: "New author is created successfully"  })
+        return res.status(201).send({ status: true, msg: "New author is created successfully" ,data: savedData   })
 
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
@@ -96,7 +96,7 @@ const loginAuthor = async function (req, res) {
 
         res.setHeader("x-api-key", token)
         
-        return res.status(200).send({ status: true, data: token, msg: "you are successfully loggedin" })
+        return res.status(200).send({ status: true, msg: "you are successfully loggedin",data: token  })
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
     }
