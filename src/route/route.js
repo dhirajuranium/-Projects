@@ -4,12 +4,18 @@ const router = express.Router();
 
 const collegeController = require("../controllers/collageController");
 const internController = require("../controllers/internController.js");
-   
 
 
+
+// API'S
 router.post('/functionup/colleges',collegeController.createCollege)
 router.post('/functionup/interns',internController.createIntern)
-router.get('/functionup/collegeDetails',collegeController.getCollegeDetail)
+router.get('/functionup/collegeDetails',collegeController.getCollegeDetail);
 
+
+//BAD URL VALIDATION
+router.all("*/**" , (req,res)=>{
+    res.status(400).send({ msg:"NOT FOUND THIS URL"})
+})
 
 module.exports = router;

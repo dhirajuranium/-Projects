@@ -6,19 +6,12 @@ const mongoose = require('mongoose');
 const app = express();
 
 app.use(bodyparser.json());
-// app.use(bodyparser.urlencoded({extended:true}));
 
-mongoose
-  .connect(
-    "mongodb+srv://dhirajpatil:XuEAzywgRheQB7B1@cluster0.0v32f.mongodb.net/group23Database?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-    }
-  )
-.then(()=>console.log('MongoDB is connected'))
-.catch(err => console.log(err));
+const url = "mongodb+srv://dhirajpatil:XuEAzywgRheQB7B1@cluster0.0v32f.mongodb.net/group23Database?retryWrites=true&w=majority"
+mongoose.connect(url,{useNewUrlParser: true,}).then(()=>console.log('MongoDB is connected')).catch(err => console.log(err));
 
 app.use('/',route)
+
 app.listen(process.env.PORT || 3000, function(){
     console.log('express app running on PORT' + (process.env.PORT || 3000))
 });
