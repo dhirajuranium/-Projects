@@ -16,14 +16,13 @@ const internSchema = new mongoose.Schema({
         trim: true,
     },
     mobile: {
-        type: String,
-        match: /^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/,
+        type: Number,
         unique: true,
         required: true,
     },
     collegeId:{
            type:ObjectId,
-           ref:college
+           ref:"college"
     },
     isDeleted: {
         type: Boolean,
