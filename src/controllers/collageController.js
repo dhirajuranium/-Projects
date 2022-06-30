@@ -17,7 +17,7 @@ try{
 
     if (uniqueName) return res.status(400).send({ status: false, msg: "This name already exists" })
 
-    if (typeof req.body.name !== "string")return res.status(400).send({ status: false, msg: " Please enter  name as a String" });
+    if (typeof name !== "string")return res.status(400).send({ status: false, msg: " Please enter  name as a String" });
 
     let validname = /^\w[a-zA-Z.]*$/;
     if (!validname.test(req.body.name))return res.status(400).send({ status: false, msg: "The  name may contain only letters" });
@@ -25,7 +25,7 @@ try{
 
     if (!fullName)return res.status(400).send({status:false,msg:"fullName is missing"})
 
-    if (typeof req.body.fullName !== "string")return res.status(400).send({ status: false, msg: " Please enter  fullName as a String" });
+    if (typeof fullName !== "string")return res.status(400).send({ status: false, msg: " Please enter  fullName as a String" });
 
     let validfullName = /^\w[a-zA-Z.\s]*$/;
     if (!validfullName.test(req.body.fullName))return res.status(400).send({ status: false, msg: "The  fullName may contain only letters" });
@@ -36,7 +36,7 @@ try{
     let validlogoLink = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
     if (!validlogoLink.test(logoLink))return res.status(400).send({ status: false, msg: "Please enter valid link" });
 
-    if (typeof logoLink !== "string")return res.status(400).send({ status: false, msg: " Please enter  logoLink as a String" });
+    // if (typeof logoLink !== "string")return res.status(400).send({ status: false, msg: " Please enter  logoLink as a String" });
 
             let saveData=await collegeModel.create(req.body)
            return res.status(201).send({status:true,data:saveData,msg:"College is created Successfully"})

@@ -20,7 +20,7 @@ const createIntern = async function (req, res) {
 
         if (!email) return res.status(400).send({ status: false, msg: "email is missing" })
 
-        if (typeof req.body.email !== "string") return res.status(400).send({ status: false, msg: " Please enter  email as a String" });
+        if (typeof email !== "string") return res.status(400).send({ status: false, msg: " Please enter  email as a String" });
 
         if (!validator.isEmail(email)) return res.status(400).send({ status: false, msg: "Entered email is invalid" });
 
@@ -35,14 +35,14 @@ const createIntern = async function (req, res) {
         if (uniqueMobailNumber) return res.status(400).send({ status: false, msg: "This mobile already exists" })
 
         let validMobailNumber = /^(\+\d{1,3}[- ]?)?\d{10}$/;
-        if (!validMobailNumber.test(req.body.mobile)) return res.status(400).send({ status: false, msg: " please enter valid Mobail Number" });
+        if (!validMobailNumber.test(mobile)) return res.status(400).send({ status: false, msg: " please enter valid Mobail Number" });
 
         if (!collegeName) return res.status(400).send({ status: false, msg: "please enter collegeName" })
 
         let validCollegeName = /^\w[a-zA-Z.\s]*$/;
         if (!validCollegeName.test(req.body.collegeName)) return res.status(400).send({ status: false, msg: "The  collegeName may contain only letters" });
 
-        if (typeof req.body.collegeName !== "string") return res.status(400).send({ status: false, msg: " Please enter  collegeName as a String" });
+        if (typeof collegeName !== "string") return res.status(400).send({ status: false, msg: " Please enter  collegeName as a String" });
 
         const getCollegeId = await collegeModel.findOne({ name: collegeName });
 
