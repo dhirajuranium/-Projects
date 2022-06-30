@@ -13,10 +13,9 @@ const createIntern = async function (req, res) {
 
         if (!name) return res.status(400).send({ status: false, msg: "name is missing" })
 
-        if (typeof req.body.name !== "string") return res.status(400).send({ status: false, msg: " Please enter  name as a String" });
+        if (typeof name !== "string") return res.status(400).send({ status: false, msg: " Please enter  name as a String" });
 
-        let validname = /^\w[a-zA-Z.\s]*$/;
-        if (!validname.test(name)) return res.status(400).send({ status: false, msg: "The  name may contain only letters" });
+        if (! /^\w[a-zA-Z.\s]*$/.test(name)) return res.status(400).send({ status: false, msg: "The  name may contain only letters" });
 
         if (!email) return res.status(400).send({ status: false, msg: "email is missing" })
 
@@ -26,13 +25,11 @@ const createIntern = async function (req, res) {
 
         if (!mobile) return res.status(400).send({ status: false, msg: "please enter mobile" })
 
-        let validMobailNumber = /^(\+\d{1,3}[- ]?)?\d{10}$/;
-        if (!validMobailNumber.test(mobile)) return res.status(400).send({ status: false, msg: " please enter valid Mobail Number" });
+        if (!/^(\+\d{1,3}[- ]?)?\d{10}$/.test(mobile)) return res.status(400).send({ status: false, msg: " please enter valid Mobail Number" });
 
         if (!collegeName) return res.status(400).send({ status: false, msg: "please enter collegeName" })
 
-        let validCollegeName = /^\w[a-zA-Z.\s]*$/;
-        if (!validCollegeName.test(collegeName)) return res.status(400).send({ status: false, msg: "The  collegeName may contain only letters" });
+        if (!/^\w[a-zA-Z.\s]*$/.test(collegeName)) return res.status(400).send({ status: false, msg: "The  collegeName may contain only letters" });
 
         if (typeof collegeName !== "string") return res.status(400).send({ status: false, msg: " Please enter  collegeName as a String" });
 
