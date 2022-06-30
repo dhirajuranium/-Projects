@@ -26,7 +26,7 @@ try{
 
     if (typeof logoLink !== "string")return res.status(400).send({ status: false, msg: " Please enter  logoLink as a String" });
 
-    if (!/^https?:\/\/.\/.\.(png|gif|webp|jpeg|jpg)\??.*$/.test(logoLink))return res.status(400).send({ status: false, msg: "Please enter valid logo link" });
+    if (!/^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$/.test(logoLink))return res.status(400).send({ status: false, msg: "Please enter valid logo link" });
 
     let uniqueName = await collegeModel.findOne({ name: name })
 
