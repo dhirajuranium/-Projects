@@ -1,4 +1,4 @@
-const collegeModel = require('../models/collageModel')
+const collegeModel = require('../models/collegeModel')
 const internModel = require('../models/internModel')
 
 
@@ -63,7 +63,7 @@ const getCollegeDetail = async function (req,res) {
 
         let {name,fullName,logoLink} = collegeDetail
 
-        return res.status(200).send({status:true, msg: "here all intern are, related to your search", data:{name,fullName,logoLink,intern}})
+        return res.status(200).send({status:true, data:{name,fullName,logoLink,intern}})
         
     } catch (error) {return res.status(500).send({status:false,msg:error.message})}
 
