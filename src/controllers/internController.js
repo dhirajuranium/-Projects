@@ -16,7 +16,7 @@ const createIntern = async function (req, res) {
         if (typeof req.body.name !== "string") return res.status(400).send({ status: false, msg: " Please enter  name as a String" });
 
         let validname = /^\w[a-zA-Z.\s]*$/;
-        if (!validname.test(req.body.name)) return res.status(400).send({ status: false, msg: "The  name may contain only letters" });
+        if (!validname.test(name)) return res.status(400).send({ status: false, msg: "The  name may contain only letters" });
 
         if (!email) return res.status(400).send({ status: false, msg: "email is missing" })
 
@@ -24,15 +24,7 @@ const createIntern = async function (req, res) {
 
         if (!validator.isEmail(email)) return res.status(400).send({ status: false, msg: "Entered email is invalid" });
 
-        let uniqueEmail = await internModel.findOne({ email: email })
-
-        if (uniqueEmail) return res.status(400).send({ status: false, msg: "This email already exists" })
-
         if (!mobile) return res.status(400).send({ status: false, msg: "please enter mobile" })
-
-        let uniqueMobailNumber = await internModel.findOne({ mobile: mobile })
-
-        if (uniqueMobailNumber) return res.status(400).send({ status: false, msg: "This mobile already exists" })
 
         let validMobailNumber = /^(\+\d{1,3}[- ]?)?\d{10}$/;
         if (!validMobailNumber.test(mobile)) return res.status(400).send({ status: false, msg: " please enter valid Mobail Number" });
@@ -40,9 +32,17 @@ const createIntern = async function (req, res) {
         if (!collegeName) return res.status(400).send({ status: false, msg: "please enter collegeName" })
 
         let validCollegeName = /^\w[a-zA-Z.\s]*$/;
-        if (!validCollegeName.test(req.body.collegeName)) return res.status(400).send({ status: false, msg: "The  collegeName may contain only letters" });
+        if (!validCollegeName.test(collegeName)) return res.status(400).send({ status: false, msg: "The  collegeName may contain only letters" });
 
         if (typeof collegeName !== "string") return res.status(400).send({ status: false, msg: " Please enter  collegeName as a String" });
+
+        let uniqueEmail = await internModel.findOne({ email: email })
+
+        if (uniqueEmail) return res.status(400).send({ status: false, msg: "This email already exists" })
+
+        let uniqueMobailNumber = await internModel.findOne({ mobile: mobile })
+
+        if (uniqueMobailNumber) return res.status(400).send({ status: false, msg: "This mobile already exists" })
 
         const getCollegeId = await collegeModel.findOne({ name: collegeName });
 
