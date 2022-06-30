@@ -49,7 +49,7 @@ const getCollegeDetail = async function (req,res) {
       
         if(Object.keys(query).length === 0) return res.status(400).send({status:false,msg:"pls Enter Query"})
 
-        if(!(["collegeName"].some(value => Object.keys(query).includes(value)))) return res.status(400).send({status:false,msg:`You cant find this Query`})
+        if(!(Object.keys(query).includes("collegeName"))) return res.status(400).send({status:false,msg:`You cant find this Query`})
 
         query.collegeName = query.collegeName.toLowerCase() 
 
@@ -65,9 +65,7 @@ const getCollegeDetail = async function (req,res) {
 
         return res.status(200).send({status:true, msg: "here all intern are, related to your search", data:{name,fullName,logoLink,intern}})
         
-    } catch (error) {
-        return res.status(500).send({status:false,msg:error.message})
-    }
+    } catch (error) {return res.status(500).send({status:false,msg:error.message})}
 
 }
 
