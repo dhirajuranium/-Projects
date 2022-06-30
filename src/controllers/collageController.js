@@ -26,17 +26,18 @@ try{
 
     if (typeof logoLink !== "string")return res.status(400).send({ status: false, msg: " Please enter  logoLink as a String" });
 
-    if (!/^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$/.test(logoLink))return res.status(400).send({ status: false, msg: "Please enter valid logo link" });
+    if (!/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+(png|jpg|jpeg|gif|png|svg)$/.test(logoLink))return res.status(400).send({ status: false, msg: "Please enter valid logo link" });
 
     let uniqueName = await collegeModel.findOne({ name: name })
 
     if (uniqueName) return res.status(400).send({ status: false, msg: "This name already exists" })
 
     let saveData=await collegeModel.create(req.body)
-    return res.status(201).send({status:true,data:saveData,msg:"College is created Successfully"})
+    return res.status(201).send({status:true,msg:"College is created Successfully",data:saveData,})
 
 }catch(err){return res.status(500).send({status:false,msg:err.message})}
 }
+
 
 
 // GET COLLEGE DETAILS
@@ -44,10 +45,13 @@ try{
 const getCollegeDetail = async function (req,res) {
 
     try {
-        let query = req.query;
+        let query =req.query;
+      
         if(Object.keys(query).length === 0) return res.status(400).send({status:false,msg:"pls Enter Query"})
 
         if(!(["collegeName"].some(value => Object.keys(query).includes(value)))) return res.status(400).send({status:false,msg:`You cant find this Query`})
+
+        query.collegeName = query.collegeName.toLowerCase() 
 
         let collegeDetail = await collegeModel.findOne({name:query.collegeName});
 

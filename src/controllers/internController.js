@@ -31,6 +31,8 @@ const createIntern = async function (req, res) {
 
         if (!/^\w[a-zA-Z.\s]*$/.test(collegeName)) return res.status(400).send({ status: false, msg: "The  collegeName may contain only letters" });
 
+        collegeName = collegeName.toLowerCase();
+
         if (typeof collegeName !== "string") return res.status(400).send({ status: false, msg: " Please enter  collegeName as a String" });
 
         let uniqueEmail = await internModel.findOne({ email: email })
@@ -48,7 +50,7 @@ const createIntern = async function (req, res) {
         req.body.collegeId = getCollegeId._id;
 
         let saveData = await internModel.create(req.body)
-        return res.status(201).send({ status: true, data: saveData, msg: "Intern is created Successfully" })
+        return res.status(201).send({ status: true, msg: "Intern is created Successfully" , data: saveData,})
 
     } catch (err) {return res.status(500).send({ status: false, msg: err.message })}
 }
