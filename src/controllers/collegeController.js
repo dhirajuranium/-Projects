@@ -55,7 +55,7 @@ const getCollegeDetail = async function (req,res) {
 
         let collegeDetail = await collegeModel.findOne({name:query.collegeName});
 
-        if(!collegeDetail)  return res.status(404).send({status:false,msg:`${query.collegeName}College  is not present .`})
+        if(!collegeDetail)  return res.status(404).send({status:false,msg:`${query.collegeName} College  is not present .`})
 
         let intern = await internModel.find({collegeId:collegeDetail._id,isDeleted:false}).select({name:1,email:1,mobile:1});
 
