@@ -1,4 +1,4 @@
-const collegeModel = require('../models/collageModel')
+const collegeModel = require('../models/collegeModel')
 const internModel = require('../models/internModel')
 
 
@@ -20,7 +20,7 @@ try{
 
     if (typeof fullName !== "string")return res.status(400).send({ status: false, msg: " Please enter  fullName as a String" });
 
-    if (!/^\w[a-zA-Z.\s]*$/.test(fullName))return res.status(400).send({ status: false, msg: "The  fullName may contain only letters" });
+    if (!/^\w[a-zA-Z.,\s]*$/.test(fullName))return res.status(400).send({ status: false, msg: "The  fullName may contain only letters" });
 
     if (!logoLink) return res.status(400).send({status:false,msg:"please enter logo link"})
 
@@ -55,15 +55,13 @@ const getCollegeDetail = async function (req,res) {
 
         let collegeDetail = await collegeModel.findOne({name:query.collegeName});
 
-        if(!collegeDetail)  return res.status(404).send({status:false,msg:`${query.collegeName} is not present .`})
+        if(!collegeDetail)  return res.status(404).send({status:false,msg:`${query.collegeName}College  is not present .`})
 
         let intern = await internModel.find({collegeId:collegeDetail._id,isDeleted:false}).select({name:1,email:1,mobile:1});
 
-        if(intern.length === 0)  return res.status(404).send({status:false,msg:"intern is not found ."})
-
         let {name,fullName,logoLink} = collegeDetail
 
-        return res.status(200).send({status:true, msg: "here all intern are, related to your search", data:{name,fullName,logoLink,intern}})
+        return res.status(200).send({status:true, data:{name,fullName,logoLink,intern}})
         
     } catch (error) {return res.status(500).send({status:false,msg:error.message})}
 
