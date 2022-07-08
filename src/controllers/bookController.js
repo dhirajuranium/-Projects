@@ -22,42 +22,35 @@ const createBook = async function (req, res) {
                 message: "Invalid request body. Please provide book details.",
             });
 
-        let {title,excerpt,userId,ISBN,category,subcategory,releasedAt,reviews,} = data;
+        let { title, excerpt, userId, ISBN, category, subcategory, releasedAt, reviews, } = data;
 
 
-        if (!validators.isValidField(title))
-            return res.status(400).send({ status: false, message: "title is required." });
+        if (!validators.isValidField(title)) return res.status(400).send({ status: false, message: "title is required." });
 
         const titleAlreadyInUse = await bookModel.findOne({ title });
+        if (titleAlreadyInUse) return res.status(400).send({ status: false, message: `title : ${title}, is already in use`, });
 
-        if (titleAlreadyInUse)
-            return res.status(400).send({status: false, message: `title : ${title}, is already in use`,});
+        if (!validators.isValidField(excerpt)) return res.status(400).send({ status: false, message: "excerpt is required." });
 
-        if (!validators.isValidField(excerpt))
-            return res.status(400).send({ status: false, message: "excerpt is required." });
+        if (!validators.isValidField(userId)) return res.status(400).send({ status: false, message: "userId is required." });
 
-        if (!validators.isValidField(userId))
-            return res.status(400).send({ status: false, message: "userId is required." });
-
-        if (!validators.isValidObjectId(userId))
-            return res.status(400).send({status: false,message: "The given userId is not a valid ObjectId.",});
+        if (!validators.isValidObjectId(userId)) return res.status(400).send({ status: false, message: "The given userId is not a valid ObjectId.", });
 
         const decodedToken = req.validToken;
 
-        if (decodedToken._id != userId)
-            return res.status(403).send({status: false,message: "Unauthorised access ! Owner info does not match.",});
+        if (decodedToken._id != userId) return res.status(403).send({ status: false, message: "Unauthorised access ! Owner info does not match.", });
 
-        if (!validators.isValidField(ISBN))
-            return res.status(400).send({ status: false, message: "ISBN is requiured." });
+        if (!validators.isValidField(ISBN)) return res.status(400).send({ status: false, message: "ISBN is requiured." });
 
         if (!validators.isValidISBN(ISBN))
-            return res.status(400).send({status: false, message:'Invalid ISBN. ISBN should be in the format "<3digit prefix code>-<10 digit isbn code>"',
+            return res.status(400).send({
+                status: false, message: 'Invalid ISBN. ISBN should be in the format "<3digit prefix code>-<10 digit isbn code>"',
             });
 
         let ISBNalreadyInUse = await bookModel.findOne({ ISBN });
 
         if (ISBNalreadyInUse)
-            return res.status(400).send({status: false,message: "ISBN has already been registered to another book.",});
+            return res.status(400).send({ status: false, message: "ISBN has already been registered to another book.", });
 
         if (!validators.isValidField(category))
             return res.status(400).send({ status: false, message: "category is required." });
@@ -73,29 +66,20 @@ const createBook = async function (req, res) {
         }
 
         if (!validators.isValidField(releasedAt))
-            return res
-                .status(400)
-                .send({ status: false, message: "releasedAt is required." });
+            return res.status(400).send({ status: false, message: "releasedAt is required." });
 
         if (!moment(releasedAt, "YYYY-MM-DD", true).isValid())
-            return res.status(400).send({
-                status: false,
-                message: "Enter a valid date with the format (YYYY-MM-DD).",
-            });
+            return res.status(400).send({ status: false, message: "Enter a valid date with the format (YYYY-MM-DD).", });
 
         if (validators.isValidField(reviews))
             if (reviews != "0")
-                return res.status(400).send({
-                    status: false,
-                    message:
-                        "reviews cannot be set to a value other than 0 while creating a new book.",
-                });
+                return res.status(400).send({ status: false, message: "reviews cannot be set to a value other than 0 while creating a new book.", });
 
-        let bookData = { title, excerpt,userId,ISBN,category,subcategory,releasedAt,reviews};
+        let bookData = { title, excerpt, userId, ISBN, category, subcategory, releasedAt, reviews };
 
         const newBook = await bookModel.create(bookData);
 
-        return res.status(201).send({status: true, message: "Book created succesfully.",data: newBook});
+        return res.status(201).send({ status: true, message: "Book created succesfully.", data: newBook });
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
     }
@@ -108,11 +92,11 @@ const getBooks = async function (req, res) {
         let filter = { isDeleted: false };
 
         if (req.query.userId != undefined) {
-            if (!validators.isValidObjectId(req.query.userId))return res.status(400).send({status: false, message: "Invalid request parameter. userId is invalid.", });
+            if (!validators.isValidObjectId(req.query.userId)) return res.status(400).send({ status: false, message: "Invalid request parameter. userId is invalid.", });
 
 
             let userExists = await userModel.findOne({ _id: req.query.userId });
-            if (!userExists) return res.status(404).send({status: false,message: "UserId does not belong to an existing user.",});
+            if (!userExists) return res.status(404).send({ status: false, message: "UserId does not belong to an existing user.", });
 
             filter["userId"] = req.query.userId;
         }
@@ -129,17 +113,19 @@ const getBooks = async function (req, res) {
             filter["subcategory"] = { $in: temp };
         }
 
-        let books = await bookModel.find(filter, { _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, reviews: 1, releasedAt: 1, }) .sort({ title: 1 });
+        let books = await bookModel.find(filter, { _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, reviews: 1, releasedAt: 1, }).sort({ title: 1 });
 
         if (books.length == 0)
             return res.status(404).send({ status: false, message: "Book(s) not found." });
 
         return res.status(200).send({ status: true, message: "Book List :-", data: books });
-        
+
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
     }
 };
+
+
 
 //============================= GET /books/:bookId route handler =========================================//
 
@@ -148,31 +134,20 @@ const getBookById = async function (req, res) {
         let bookId = req.params.bookId;
 
         if (!validators.isValidObjectId(bookId))
-            return res.status(400).send({
-                status: false,
-                message: `The given bookId:${bookId} is not a valid book id`,
-            });
+            return res.status(400).send({status: false,message: `The given bookId:${bookId} is not a valid book id`,});
 
-        const bookDetail = await bookModel.findOne({
-            _id: bookId,
-            isDeleted: false,
-        });
+        const bookDetail = await bookModel.findOne({ _id: bookId,isDeleted: false});
 
         if (!bookDetail)
-            return res
-                .status(404)
-                .send({ status: false, message: "Book not found!" });
+            return res.status(404).send({ status: false, message: "Book not found!" });
 
         const reviewsData = await reviewModel.find(
             { bookId: bookId, isDeleted: false },
             { _id: 1, bookId: 1, reviewedBy: 1, rating: 1, review: 1, releasedAt: 1 }
         );
 
-        return res.status(200).send({
-            status: true,
-            message: "Book List :-",
-            data: { ...bookDetail.toObject(), reviewsData },
-        });
+        return res.status(200).send({status: true, message: "Book List :-",data: { ...bookDetail.toObject(), reviewsData }});
+        
     } catch (error) {
         return res.status(500).send({ status: false, error: error.message });
     }
