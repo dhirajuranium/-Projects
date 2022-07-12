@@ -1,13 +1,7 @@
-//=================================== imports ==========================================//
-
 const validators = require("../validators/validator");
-
 const bookModel = require("../models/bookModel");
-
 const userModel = require("../models/userModel");
-
 const reviewModel = require("../models/reviewModel");
-
 const moment = require("moment");
 
 //============================ POST /books route handler =========================================//
@@ -17,10 +11,7 @@ const createBook = async function (req, res) {
         const data = req.body;
 
         if (!validators.isValidRequestBody(data))
-            return res.status(400).send({
-                status: false,
-                message: "Invalid request body. Please provide book details.",
-            });
+            return res.status(400).send({status: false,message: "Invalid request body. Please provide book details.",});
 
         let { title, excerpt, userId, ISBN, category, subcategory, releasedAt, reviews, } = data;
 
@@ -43,9 +34,7 @@ const createBook = async function (req, res) {
         if (!validators.isValidField(ISBN)) return res.status(400).send({ status: false, message: "ISBN is requiured." });
 
         if (!validators.isValidISBN(ISBN))
-            return res.status(400).send({
-                status: false, message: 'Invalid ISBN. ISBN should be in the format "<3digit prefix code>-<10 digit isbn code>"',
-            });
+            return res.status(400).send({status: false, message: 'Invalid ISBN. ISBN should be in the format "<3digit prefix code>-<10 digit isbn code>"',});
 
         let ISBNalreadyInUse = await bookModel.findOne({ ISBN });
 
@@ -134,9 +123,9 @@ const getBookById = async function (req, res) {
         let bookId = req.params.bookId;
 
         if (!validators.isValidObjectId(bookId))
-            return res.status(400).send({status: false,message: `The given bookId:${bookId} is not a valid book id`,});
+            return res.status(400).send({ status: false, message: `The given bookId:${bookId} is not a valid book id`, });
 
-        const bookDetail = await bookModel.findOne({ _id: bookId,isDeleted: false});
+        const bookDetail = await bookModel.findOne({ _id: bookId, isDeleted: false });
 
         if (!bookDetail)
             return res.status(404).send({ status: false, message: "Book not found!" });
@@ -146,8 +135,8 @@ const getBookById = async function (req, res) {
             { _id: 1, bookId: 1, reviewedBy: 1, rating: 1, review: 1, releasedAt: 1 }
         );
 
-        return res.status(200).send({status: true, message: "Book List :-",data: { ...bookDetail.toObject(), reviewsData }});
-        
+        return res.status(200).send({ status: true, message: "Book List :-", data: { ...bookDetail.toObject(), reviewsData } });
+
     } catch (error) {
         return res.status(500).send({ status: false, error: error.message });
     }
@@ -160,19 +149,12 @@ const updateBookById = async function (req, res) {
         let requestBody = req.body;
 
         if (!validators.isValidRequestBody(requestBody))
-            return res.status(400).send({
-                status: false,
-                message:
-                    "Invalid request parameters. Please provide the book details to be updated.",
-            }); //change-- erase author
+            return res.status(400).send({ status: false, message: "Invalid request parameters. Please provide the book details to be updated.", }); //change-- erase author
 
         let bookId = req.params.bookId;
 
         if (!validators.isValidObjectId(bookId))
-            return res.status(400).send({
-                status: false,
-                message: `Invalid request parameter. The given bookId:${bookId} is not a valid book id`,
-            });
+            return res.status(400).send({ status: false, message: `Invalid request parameter. The given bookId:${bookId} is not a valid book id`, });
 
         let bookIdCheck = await bookModel.findOne({
             _id: bookId,
@@ -180,28 +162,18 @@ const updateBookById = async function (req, res) {
         });
 
         if (!bookIdCheck)
-            return res
-                .status(404)
-                .send({ status: false, message: "Book not found!" });
+            return res.status(404).send({ status: false, message: "Book not found!" });
 
         if (!(req.validToken._id == bookIdCheck.userId))
-            return res
-                .status(400)
-                .send({ status: false, message: "Unauthorized access!" });
+            return res.status(400).send({ status: false, message: "Unauthorized access!" });
 
         let updateObject = {};
 
         if (validators.isValidField(requestBody.title)) {
-            const titleAlreadyInUse = await bookModel.findOne({
-                title: requestBody.title,
-                isDeleted: false,
-            });
+            const titleAlreadyInUse = await bookModel.findOne({ title: requestBody.title, isDeleted: false, });
 
             if (titleAlreadyInUse)
-                return res.status(400).send({
-                    status: false,
-                    message: `The title : '${requestBody.title}', has already been taken.`,
-                });
+                return res.status(400).send({ status: false, message: `The title : '${requestBody.title}', has already been taken.`, });
 
             updateObject.title = requestBody.title;
         }
@@ -211,31 +183,21 @@ const updateBookById = async function (req, res) {
 
         if (validators.isValidField(requestBody.ISBN)) {
             if (!validators.isValidISBN(requestBody.ISBN))
-                return res.status(400).send({
-                    status: false,
-                    message:
-                        "Invalid ISBN. ISBN should be in the format <3digit prefix code>-<10 digit isbn code> .",
-                });
+                return res.status(400).send({ status: false, message: "Invalid ISBN. ISBN should be in the format <3digit prefix code>-<10 digit isbn code> ." });
 
             let ISBNalreadyInUse = await bookModel.findOne({
                 ISBN: requestBody.ISBN,
             });
 
             if (ISBNalreadyInUse)
-                return res.status(400).send({
-                    status: false,
-                    message: `ISBN:${requestBody.ISBN} has already been registered to another book.`,
-                });
+                return res.status(400).send({ status: false, message: `ISBN:${requestBody.ISBN} has already been registered to another book.`, });
 
             updateObject.ISBN = requestBody.ISBN;
         }
 
         if (validators.isValidField(requestBody.releasedAt)) {
             if (!moment(requestBody.releasedAt, "YYYY-MM-DD", true).isValid())
-                return res.status(400).send({
-                    status: false,
-                    message: "Enter a valid date with the format YYYY-MM-DD.",
-                });
+                return res.status(400).send({ status: false, message: "Enter a valid date with the format YYYY-MM-DD.", });
 
             updateObject.releasedAt = requestBody.releasedAt;
         }
@@ -246,54 +208,32 @@ const updateBookById = async function (req, res) {
             { new: true }
         );
 
-        return res.status(200).send({
-            status: true,
-            message: "Book details updated sucessfully.",
-            data: update,
-        });
+        return res.status(200).send({ status: true, message: "Book details updated sucessfully.", data: update });
     } catch (error) {
         return res.status(500).send({ status: false, error: error.message });
     }
-};
+}
 
 //=================================== DELETE /books/:bookId route handler =========================================//
 
 const deleteBookById = async function (req, res) {
     try {
         if (req.params.bookId === undefined)
-            return res.status(400).send({
-                status: false,
-                message: "Invalid request parameter. Please provide bookId.",
-            });
+            return res.status(400).send({ status: false, message: "Invalid request parameter. Please provide bookId.", });
 
         if (!validators.isValidObjectId(req.params.bookId))
-            return res.status(400).send({
-                status: false,
-                message: `Invalid request parameter. The given bookId:${req.params.bookId} is not a valid ObjectId.`,
-            });
+            return res.status(400).send({ status: false, message: `Invalid request parameter. The given bookId:${req.params.bookId} is not a valid ObjectId.`, });
 
-        let book = await bookModel.findOne(
-            { _id: req.params.bookId, isDeleted: false },
-            { userId: 1 }
-        );
-        if (!book)
-            return res
-                .status(404)
-                .send({ status: false, message: "Book doesn't exist." });
+        let book = await bookModel.findOne({ _id: req.params.bookId, isDeleted: false }, { userId: 1 });
+
+        if (!book) return res.status(404).send({ status: false, message: "Book doesn't exist." });
 
         if (req.validToken._id != book.userId)
-            return res.status(403).send({
-                status: false,
-                message: "Unauthorised access ! Owner info does not match",
-            });
+            return res.status(403).send({ status: false, message: "Unauthorised access ! Owner info does not match", });
 
-        await bookModel.findOneAndUpdate(
-            { _id: req.params.bookId },
-            { isDeleted: true, deletedAt: new Date() }
-        );
-        return res
-            .status(200)
-            .send({ status: true, message: "Book deleted successfully." });
+        await bookModel.findOneAndUpdate({ _id: req.params.bookId }, { isDeleted: true, deletedAt: new Date() });
+        return res.status(200).send({ status: true, message: "Book deleted successfully." });
+
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
     }
@@ -301,10 +241,4 @@ const deleteBookById = async function (req, res) {
 
 //================================== exports =======================================//
 
-module.exports = {
-    createBook,
-    getBooks,
-    getBookById,
-    updateBookById,
-    deleteBookById,
-};
+module.exports = { createBook,getBooks,getBookById, updateBookById,deleteBookById,};
