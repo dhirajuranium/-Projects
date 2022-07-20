@@ -11,14 +11,18 @@ const urlSchema = new mongoose.Schema({
 
     longUrl: {
         type: String,
-        required: true
+        required: true,
+        trim: true
+
     },
 
     shortUrl: {
         type: String,
         required: true,
-        unique: true
-    }
-},{timestamps:true})
+        unique: true,
+        trim: true
 
-module.exports=mongoose.model('url',urlSchema)
+    }
+}, { timestamps: true })
+
+module.exports = mongoose.model('url', urlSchema)
