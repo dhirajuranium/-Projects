@@ -35,6 +35,11 @@ const createBook = async function (req, res) {
 
         if (!validators.isValidISBN(ISBN))
             return res.status(400).send({status: false, message: 'Invalid ISBN. ISBN should be in the format "<3digit prefix code>-<10 digit isbn code>"',});
+    if (!validators.isValidISBN(ISBN))
+      return res.status(400).send({
+        status: false,
+        message:'Enter a valid ISBN number of 10 or 13  digits without hyphen(-).',
+      });
 
         let ISBNalreadyInUse = await bookModel.findOne({ ISBN });
 

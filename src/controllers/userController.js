@@ -57,6 +57,14 @@ const createUser = async function (req, res) {
         if (!/^[^0][0-9]{2}[0-9]{3}$/.test(pincode)) { return res.status(400) .send({ status: false,message: "Pincode should be a valid pincode number."});
         }
       }
+      if (validators.isValidField(city)){
+        if(!city.match(/^[A-Za-z]+$/)){
+          return res.status(400).send({
+            status : false,
+            message :"City name should have alphabets only"
+          })
+        }
+      }
     }
     let userDetails = { title, name, phone, email, password, address };
 
